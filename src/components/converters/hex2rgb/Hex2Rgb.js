@@ -1,52 +1,43 @@
-import Form from "./Form";
-import React from 'react';
-// const Hex2Rgb = () => {
-//     return (
-//       <Form />
-//     );
-// }
+import React, {useEffect, useState} from 'react';
+import hexToRgba from 'hex-to-rgba';
 
 
-class Hex2Rgb extends React.Component {
+const Hex2Rgb = () => {
+    const [form, setDataForm] = useState({hex: '', rgb: ''});
 
-    constructor(props) {
-        super(props)
-        this.updateInputState = this.updateInputState.bind(this);
+    useEffect(() => {
+        document.querySelector('.body-bg').style.backgroundColor = form.rgb;
+    }, [form.rgb]);
+
+    const isValidColor = (color) => {
+        return (/^#[0-9A-Za-z]{6}$/.test(color));
     }
 
-    hexToRGB = (hex) => {
-        hex = '0x' + hex
-        let r = hex >> 16 & 0xFF
-        let g = hex >> 8 & 0xFF
-        let b = hex & 0xFF
-        return `rgb(${r}, ${g}, ${b})`
+
+    const handleChange = (e) => {
+        const inputColorValue = e.target.value;
+        setDataForm({hex: inputColorValue});
+
+        if (isValidColor(inputColorValue)) {
+            setDataForm({rgb: hexToRgba(inputColorValue)});
+        } else {
+            if (inputColorValue.length === 7) {
+                setDataForm({rgb: 'Ошибка!'});
+            } else {
+                setDataForm({rgb: ''});
+            }
+        }
     }
 
-    updateInputState = (event) => {
-        // console.log(event)
-        this.setState({
-            input: event.trim(),
-            rgb: event.length === 6
-                ? this.hexToRGB(event)
-                : ''
-        })
-    }
+    return (
+        <div className="body-bg">
+            <form className='form-convert-color' onInput={handleChange}>
+                <input className='form-convert-color__input form-convert-color__item' type="text" maxLength="7" defaultValue={form.hex}/>
+                <p className="form-convert-color__result form-convert-color__item">{form.rgb}</p>
+            </form>
+        </div>
+    );
 
-    state = {
-        input: '',
-        rgb: ''
-    }
-
-    render() {
-        return (
-            <div className="app" style={{background:this.state.rgb}}>
-                <Form onChange={this.updateInputState}
-                      value={this.state.input}
-                      rgb={this.state.rgb} />
-            </div>
-        )
-    }
 }
-
 
 export {Hex2Rgb};
