@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import './Hex2Rgb.css';
+import {useEffect, useState} from 'react';
 import hexToRgba from 'hex-to-rgba';
 
 
